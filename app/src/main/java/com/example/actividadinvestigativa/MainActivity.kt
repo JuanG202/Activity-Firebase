@@ -36,7 +36,9 @@ class MainActivity : ComponentActivity() {
 fun FormScreen() {
     var name by remember { mutableStateOf("") }
     var grade by remember { mutableStateOf("") }
-    val database = FirebaseDatabase.getInstance().getReference("students")
+    val database = FirebaseDatabase.getInstance("https://actividadinvestigativa-de9a6-default-rtdb.firebaseio.com/")
+        .getReference("students")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,14 +73,37 @@ fun FormScreen() {
 
         Button(
             onClick = {
+                if (name.isNotEmpty() && grade.isNotEmpty()) {
+                    val studentId = database.push().key // genera un ID único
+                    val student = Student(name, grade)
 
+                    if (studentId != null) {
+                        database.child(studentId).setValue(student)
+                            .addOnSuccessListener {
+                                name = ""
+                                grade = ""
+                                // mensaje de éxito opcional
+                                println("Datos guardados correctamente en Firebase")
+                            }
+                            .addOnFailureListener {
+                                println("Error al guardar: ${it.message}")
+                            }
+                    }
+                } else {
+                    println("Por favor, llena todos los campos")
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Submit")
         }
+
     }
 }
+data class Student(
+    val name: String = "",
+    val grade: String = ""
+)
 
 @Preview(showBackground = true)
 @Composable

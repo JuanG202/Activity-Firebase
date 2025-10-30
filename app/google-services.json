@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "205312263595",
-    "firebase_url": "https://composefirebaseapp-4016e-default-rtdb.firebaseio.com",
-    "project_id": "composefirebaseapp-4016e",
-    "storage_bucket": "composefirebaseapp-4016e.firebasestorage.app"
+    "project_number": "43434594601",
+    "firebase_url": "https://actividadinvestigativa-de9a6-default-rtdb.firebaseio.com",
+    "project_id": "actividadinvestigativa-de9a6",
+    "storage_bucket": "actividadinvestigativa-de9a6.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:205312263595:android:06be1d602f4816ce07feee",
+        "mobilesdk_app_id": "1:43434594601:android:31b02de22531d8e336a738",
         "android_client_info": {
           "package_name": "com.example.actividadinvestigativa"
         }
@@ -16,26 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyADyW2HPzO_CCUGFUlJDS22OkHf36heoBE"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:205312263595:android:5abb2a47bb9f8f3b07feee",
-        "android_client_info": {
-          "package_name": "com.example.composefirebaseapp"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyADyW2HPzO_CCUGFUlJDS22OkHf36heoBE"
+          "current_key": "AIzaSyCEkHQXG6TH20_3UpeSlgJQEUVgIKYBosE"
         }
       ],
       "services": {
