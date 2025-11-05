@@ -12,12 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.actividadinvestigativa.ui.theme.ActividadInvestigativaTheme
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.FirebaseApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseApp.initializeApp(this)
         enableEdgeToEdge()
         setContent {
             ActividadInvestigativaTheme {
@@ -35,9 +40,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun FormScreen() {
     var name by remember { mutableStateOf("") }
-    var grade by remember { mutableStateOf("") }
-    val database = FirebaseDatabase.getInstance("https://actividadinvestigativa-de9a6-default-rtdb.firebaseio.com/")
-        .getReference("students")
+    var email by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -46,8 +49,9 @@ fun FormScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
         Text(
-            text = "Registro de Estudiantes",
+            text = "Registro (API Node)",
             style = MaterialTheme.typography.headlineSmall
         )
 
@@ -63,9 +67,9 @@ fun FormScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = grade,
-            onValueChange = { grade = it },
-            label = { Text("Grade") },
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -73,37 +77,47 @@ fun FormScreen() {
 
         Button(
             onClick = {
-                if (name.isNotEmpty() && grade.isNotEmpty()) {
-                    val studentId = database.push().key // genera un ID único
-                    val student = Student(name, grade)
+                if (name.isNotEmpty() && email.isNotEmpty()) {
 
-                    if (studentId != null) {
-                        database.child(studentId).setValue(student)
-                            .addOnSuccessListener {
-                                name = ""
-                                grade = ""
-                                // mensaje de éxito opcional
-                                println("Datos guardados correctamente en Firebase")
-                            }
-                            .addOnFailureListener {
-                                println("Error al guardar: ${it.message}")
-                            }
+                    // JSON a enviar
+                    val json = """
+                        {
+                          "name": "$name",
+                          "email": "$email"
+                        }
+                    """.trimIndent()
+
+                    // Cliente HTTP
+                    val client = OkHttpClient()
+                    val mediaType = "application/json; charset=utf-8".toMediaType()
+                    val body = json.toRequestBody(mediaType)
+
+                    val request = Request.Builder()
+                        .url("http://10.0.2.2:3000/users") // EMULADOR → API LOCAL
+                        .post(body)
+                        .build()
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = client.newCall(request).execute()
+                            println("Respuesta del servidor: ${response.body?.string()}")
+                        } catch (e: Exception) {
+                            println("Error: ${e.message}")
+                        }
                     }
+
+                    name = ""
+                    email = ""
                 } else {
-                    println("Por favor, llena todos los campos")
+                    println("Por favor llena todos los campos")
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Submit")
         }
-
     }
 }
-data class Student(
-    val name: String = "",
-    val grade: String = ""
-)
 
 @Preview(showBackground = true)
 @Composable
